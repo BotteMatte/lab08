@@ -1,8 +1,11 @@
 package it.unibo.mvc;
 
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
+
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Toolkit;
@@ -29,8 +32,21 @@ public class MiniGUI {
     public MiniGUI() {
         final JPanel canvas = new JPanel();
         canvas.setLayout(new BorderLayout());
+
+        ///PARTE 1  ********************************
+        //creo nuovo panel
+        final JPanel canvas2 = new JPanel();
+        canvas2.setLayout(new BoxLayout(canvas2, BoxLayout.LINE_AXIS));
+        //aggiungo al panel principale canvas il secondario canvas2
+        canvas.add(canvas2, BorderLayout.CENTER);
+        //uso button gia fatto
         final JButton write = new JButton("Print a random number on standard output");
-        canvas.add(write, BorderLayout.CENTER);
+        canvas2.add(write);
+        
+        //pate 2 ********************************
+        final JTextField Results = new JTextField();
+        canvas.add(Results, BorderLayout.NORTH);
+        //******************* 
         frame.setContentPane(canvas);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         /*
@@ -39,7 +55,12 @@ public class MiniGUI {
         write.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(final ActionEvent e) {
-                System.out.println(randomGenerator.nextInt());
+                //part 3 ********************************
+                final int num = randomGenerator.nextInt(100);
+                System.out.println(num);
+                Results.setText("Il numero casuale è " + Integer.toString(num));
+                //**************************** */
+                //System.out.println(randomGenerator.nextInt());
             }
         });
     }
