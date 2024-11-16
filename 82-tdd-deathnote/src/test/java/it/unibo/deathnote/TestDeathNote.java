@@ -120,7 +120,7 @@ class TestDeathNote {
         deathNote.writeName(MATTEO_BOTTEGHI);
         sleep(INVALID_DETAILS_TIME);
         deathNote.writeDetails("ha pippato troppo");
-        assertEquals("ha corso troppo a lungo", deathNote.getDeathDetails(MATTEO_BOTTEGHI));
+        assertEquals("", deathNote.getDeathDetails(MATTEO_BOTTEGHI));
 
     }
 

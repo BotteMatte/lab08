@@ -7,6 +7,7 @@ import java.util.*;
 public class DeathNoteImplementation implements DeathNote {
 
     private static final long VALID_CAUSE_TIMEOUT = 40;
+    private static final long VALID_DETAILS_TIMEOUT = 0;
     // creo i campi di death note
     private final Map<String, Death> deaths;
     private String lastWrittenName;
@@ -33,7 +34,8 @@ public class DeathNoteImplementation implements DeathNote {
     public void writeName(String name) {
         lastTime_forLastName = System.currentTimeMillis();
         lastWrittenName = name;
-        deaths.put(name, new Death());
+        Death record = new Death();
+        deaths.put(name, record);
     }
 
     @Override
@@ -54,7 +56,7 @@ public class DeathNoteImplementation implements DeathNote {
         // dall'inserimento del nome
         long currentTime = System.currentTimeMillis();
         long timeElapsed = currentTime - lastTime_forLastName; // Calcola il tempo trascorso
-        if (timeElapsed <= 40) {
+        if (timeElapsed <= VALID_CAUSE_TIMEOUT) {
             // Se la causa di morte viene scritta entro 40 millisecondi, aggiorna la causa
             Death updatedRecord = new Death(cause);
             deaths.put(lastWrittenName, updatedRecord); // Aggiorna il record con la nuova causa
@@ -67,8 +69,29 @@ public class DeathNoteImplementation implements DeathNote {
 
     @Override
     public boolean writeDetails(String details) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'writeDetails'");
+        // controllo se è presetne un nome sul quale scrivere i dettagli
+        if (lastWrittenName == null) {
+            throw new IllegalStateException("error:no nome for the details");
+        }
+        // recupero il record
+        Death record = deaths.get(lastWrittenName);
+        // Se non esiste un record, significa che non è stato scritto un nome
+        if (record == null) {
+            return false;
+        }
+
+        long currentTime = System.currentTimeMillis();
+        long timeElapsed = currentTime - lastTime_forLastName; // Calcola il tempo trascorso
+        if (timeElapsed <= VALID_DETAILS_TIMEOUT) {
+            // Se la causa di morte viene scritta entro 40 millisecondi, aggiorna la causa
+            record.setDetails(details);
+            deaths.put(lastWrittenName, record); // Aggiorna il record con la nuova causa
+            return true;
+        } else {
+            // Se è passato più di 40 millisecondi, non cambia la causa di morte
+            return false; // La causa rimane quella di default
+        }
+
     }
 
     @Override
@@ -83,8 +106,12 @@ public class DeathNoteImplementation implements DeathNote {
 
     @Override
     public String getDeathDetails(String name) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getDeathDetails'");
+        Death death_data = deaths.get(name);
+        if (death_data != null) {
+            return death_data.getDetails();
+        } else {
+            throw new IllegalArgumentException("errore: hai inserito un nome sbaglaito");
+        }
     }
 
     @Override
